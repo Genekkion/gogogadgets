@@ -2,8 +2,8 @@ package iter
 
 import (
 	"context"
-	"github.com/Genekkion/gogogadgets//pkg/log/charm"
-	sync2 "github.com/Genekkion/gogogadgets//pkg/sync"
+	"github.com/Genekkion/gogogadgets/pkg/log/charm"
+	sync2 "github.com/Genekkion/gogogadgets/pkg/sync"
 	"iter"
 	"runtime"
 )

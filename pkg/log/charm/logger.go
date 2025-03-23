@@ -8,7 +8,6 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/Genekkion/gogogadgets/pkg/config"
 	"github.com/Genekkion/gogogadgets/pkg/log"
 
 	cl "github.com/charmbracelet/log"
@@ -44,7 +43,7 @@ func New(w io.Writer, opts ...LoggerOption) *Logger {
 	return l
 }
 
-func NewFromFile(filePath string, opts ...config.Option) (*Logger, error) {
+func NewFromFile(filePath string, opts ...LoggerOption) (*Logger, error) {
 	stat, err := os.Stat(filePath)
 	if err != nil && !errors.Is(err, fs.ErrNotExist) {
 		return nil, err
@@ -58,7 +57,9 @@ func NewFromFile(filePath string, opts ...config.Option) (*Logger, error) {
 		return nil, err
 	}
 
-	return New(file, WithDestructor(file.Close)), nil
+	return New(file,
+		append([]LoggerOption{WithDestructor(file.Close)}, opts...)...,
+	), nil
 }
 
 func (l *Logger) Close() error {
@@ -84,7 +85,7 @@ func (l Logger) GetLevel() log.Level {
 }
 
 func GetLevel() log.Level {
-    return defaultLogger.GetLevel()
+	return defaultLogger.GetLevel()
 }
 
 func (l Logger) Debug(msg string, kv ...any) {
