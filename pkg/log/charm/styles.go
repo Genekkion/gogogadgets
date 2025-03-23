@@ -13,27 +13,27 @@ var defaultStyle = func() *cl.Styles {
 		Bold(true).
 		Padding(0, 1, 0, 1)
 
-	styles.Levels[cl.DebugLevel] = style.
+	styles.Levels[cl.DebugLevel] = style.Copy().
 		SetString(log.LevelDebug.Tag()).
 		Background(lipgloss.Color("#414868")).
 		Foreground(lipgloss.Color("#FFFFFF"))
 
-	styles.Levels[cl.InfoLevel] = style.
+	styles.Levels[cl.InfoLevel] = style.Copy().
 		SetString(log.LevelInfo.Tag()).
 		Background(lipgloss.Color("#485E30")).
 		Foreground(lipgloss.Color("#FFFFFF"))
 
-	styles.Levels[cl.WarnLevel] = style.
+	styles.Levels[cl.WarnLevel] = style.Copy().
 		SetString(log.LevelWarn.Tag()).
 		Background(lipgloss.Color("#FF9E64")).
 		Foreground(lipgloss.Color("#000000"))
 
-	styles.Levels[cl.ErrorLevel] = style.
+	styles.Levels[cl.ErrorLevel] = style.Copy().
 		SetString(log.LevelError.Tag()).
 		Background(lipgloss.Color("#F7768E")).
 		Foreground(lipgloss.Color("#000000"))
 
-	styles.Levels[cl.FatalLevel] = style.
+	styles.Levels[cl.FatalLevel] = style.Copy().
 		SetString(log.LevelFatal.Tag()).
 		Background(lipgloss.Color("#BB9AF7")).
 		Foreground(lipgloss.Color("#000000"))
