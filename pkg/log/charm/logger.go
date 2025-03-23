@@ -35,7 +35,6 @@ func New(w io.Writer, opts ...LoggerOption) *Logger {
 	}
 
 	l.logger.SetStyles(defaultStyle)
-    fmt.Println(*defaultStyle)
 
 	for _, opt := range opts {
 		opt(l)
