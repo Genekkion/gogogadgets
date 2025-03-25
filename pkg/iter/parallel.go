@@ -2,8 +2,7 @@ package iter
 
 import (
 	"context"
-	"github.com/Genekkion/gogogadgets/pkg/log/charm"
-	sync2 "github.com/Genekkion/gogogadgets/pkg/sync"
+	"github.com/Genekkion/gogogadgets/pkg/sync"
 	"iter"
 	"runtime"
 )
@@ -15,7 +14,7 @@ var (
 )
 
 // Does not preserve order
-func ParallelMap[A any, B any](ite iter.Seq[A], mapFunc MapFunc[A, B],
+func ParallelMap[A any, B any](ite Iterator[A], fn func(A) B,
 	maxCpuCount ...int) iter.Seq[B] {
 
 	return func(yield func(B) bool) {
@@ -31,11 +30,11 @@ func ParallelMap[A any, B any](ite iter.Seq[A], mapFunc MapFunc[A, B],
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		closeOut := sync2.CallOnceAfter(nC, func() {
+		closeOut := sync.CallOnceAfter(nC, func() {
 			close(out)
 		})
 
-		for i := range nC {
+		for range nC {
 			go func() {
 				defer closeOut()
 
@@ -46,11 +45,11 @@ func ParallelMap[A any, B any](ite iter.Seq[A], mapFunc MapFunc[A, B],
 					default:
 					}
 
-					x := mapFunc(v)
+					x := fn(v)
 
 					select {
 					case out <- x:
-						charm.Debug("Handled", "i", i)
+						// TODO:
 					case <-ctx.Done():
 						return
 					}
@@ -96,11 +95,11 @@ func ParallelFilter[T any](ite iter.Seq[T], filterFunc FilterFunc[T],
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		closeOut := sync2.CallOnceAfter(nC, func() {
+		closeOut := sync.CallOnceAfter(nC, func() {
 			close(out)
 		})
 
-		for i := range nC {
+		for range nC {
 			go func() {
 				defer closeOut()
 
@@ -114,7 +113,8 @@ func ParallelFilter[T any](ite iter.Seq[T], filterFunc FilterFunc[T],
 					if filterFunc(v) {
 						select {
 						case out <- v:
-							charm.Debug("Handled", "i", i)
+							// TODO:
+							// charm.Debug("Handled", "i", i)
 						case <-ctx.Done():
 							return
 						}
