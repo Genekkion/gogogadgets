@@ -17,17 +17,13 @@ const (
 	defaultLevel = cl.DebugLevel
 )
 
-var (
-	defaultLogger = New(os.Stdout)
-)
-
 type Logger struct {
 	logger      *cl.Logger
 	destructors []Destructor
 }
 
-func New(w io.Writer, opts ...LoggerOption) *Logger {
-	l := &Logger{
+func New(w io.Writer, opts ...LoggerOption) Logger {
+	l := Logger{
 		logger: cl.NewWithOptions(w, cl.Options{
 			ReportTimestamp: true,
 			Level:           defaultLevel,
@@ -37,7 +33,7 @@ func New(w io.Writer, opts ...LoggerOption) *Logger {
 	l.logger.SetStyles(defaultStyle)
 
 	for _, opt := range opts {
-		opt(l)
+		opt(&l)
 	}
 
 	return l
@@ -57,9 +53,10 @@ func NewFromFile(filePath string, opts ...LoggerOption) (*Logger, error) {
 		return nil, err
 	}
 
-	return New(file,
+	l := New(file,
 		append([]LoggerOption{WithDestructor(file.Close)}, opts...)...,
-	), nil
+	)
+	return &l, nil
 }
 
 func (l *Logger) Close() error {
@@ -76,16 +73,8 @@ func (l *Logger) SetLevel(level log.Level) {
 	l.logger.SetLevel(Level(level).ToCharm())
 }
 
-func SetLevel(level log.Level) {
-	defaultLogger.SetLevel(level)
-}
-
 func (l Logger) GetLevel() log.Level {
 	return log.Level(FromCharm(l.logger.GetLevel()))
-}
-
-func GetLevel() log.Level {
-	return defaultLogger.GetLevel()
 }
 
 func (l Logger) Debug(msg string, kv ...any) {
@@ -106,46 +95,6 @@ func (l Logger) Error(msg string, kv ...any) {
 
 func (l Logger) Fatal(msg string, kv ...any) {
 	l.logger.Fatal(msg, kv...)
-}
-
-func Debug(msg string, kv ...any) {
-	defaultLogger.Debug(msg, kv...)
-}
-
-func Info(msg string, kv ...any) {
-	defaultLogger.Info(msg, kv...)
-}
-
-func Warn(msg string, kv ...any) {
-	defaultLogger.Warn(msg, kv...)
-}
-
-func Error(msg string, kv ...any) {
-	defaultLogger.Error(msg, kv...)
-}
-
-func Fatal(msg string, kv ...any) {
-	defaultLogger.Fatal(msg, kv...)
-}
-
-func DebugKV(kv ...any) {
-	defaultLogger.Debug("", kv...)
-}
-
-func InfoKV(kv ...any) {
-	defaultLogger.Info("", kv...)
-}
-
-func WarnKV(kv ...any) {
-	defaultLogger.Warn("", kv...)
-}
-
-func ErrorKV(kv ...any) {
-	defaultLogger.Error("", kv...)
-}
-
-func FatalKV(kv ...any) {
-	defaultLogger.Fatal("", kv...)
 }
 
 func getSkipCount(skip ...int) int {
@@ -180,19 +129,11 @@ func (l Logger) ErrorWrapper(err error, skip ...int) error {
 	return err
 }
 
-func ErrorWrapper(err error) error {
-	return defaultLogger.ErrorWrapper(err)
-}
-
 func (l Logger) FatalWrapper(err error, skip ...int) {
 	if err != nil {
 		l.printStackTrace(skip...)
 		l.Fatal("Program received error", "err", err)
 	}
-}
-
-func FatalWrapper(err error) {
-	defaultLogger.FatalWrapper(err, 2)
 }
 
 func (l Logger) DebugCaller(msg string, kv ...any) {
@@ -207,8 +148,4 @@ func (l Logger) DebugCaller(msg string, kv ...any) {
 			"line", line,
 		)
 	}
-}
-
-func DebugCaller(msg string, kv ...any) {
-	defaultLogger.DebugCaller(msg, kv...)
 }

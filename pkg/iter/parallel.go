@@ -30,7 +30,7 @@ func ParallelMap[A any, B any](ite Iterator[A], fn func(A) B,
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		closeOut := sync.CallOnceAfter(nC, func() {
+		closeOut := sync.CallOnceAfter(int32(nC), func() {
 			close(out)
 		})
 
@@ -95,7 +95,7 @@ func ParallelFilter[T any](ite iter.Seq[T], filterFunc FilterFunc[T],
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
-		closeOut := sync.CallOnceAfter(nC, func() {
+		closeOut := sync.CallOnceAfter(int32(nC), func() {
 			close(out)
 		})
 
