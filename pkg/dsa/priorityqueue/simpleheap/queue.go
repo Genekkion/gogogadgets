@@ -1,6 +1,7 @@
 package pqueue
 
 import (
+	"cmp"
 	"container/heap"
 
 	"github.com/Genekkion/gogogadgets/pkg/iter"
@@ -18,13 +19,13 @@ const (
 	defaultPriority = PriorityMax
 )
 
-type PQueue[T Item] struct {
+type PQueue[T cmp.Ordered] struct {
 	priority PriorityType
 	data     []T
 }
 
 // Defaults to a queue which prioritises a higher priority
-func New[T Item](opts ...PQueueOption[T]) *PQueue[T] {
+func New[T cmp.Ordered](opts ...PQueueOption[T]) *PQueue[T] {
 	q := &PQueue[T]{
 		priority: defaultPriority,
 	}
@@ -42,7 +43,7 @@ func (q PQueue[T]) Len() int {
 }
 
 func (q PQueue[T]) Less(i int, j int) bool {
-	v := q.data[i].Less(q.data[j])
+	v := cmp.Less(q.data[i], q.data[j])
 
 	switch q.priority {
 	case PriorityMax:
