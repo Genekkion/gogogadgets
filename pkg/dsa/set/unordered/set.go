@@ -27,6 +27,10 @@ func (s Set[T]) Contains(key T) bool {
 	return ok
 }
 
+func (s *Set[T]) Add(keys ...T) bool {
+	return s.Set(keys...)
+}
+
 func (s *Set[T]) Set(keys ...T) (modified bool) {
 	modified = false
 
