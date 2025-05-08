@@ -6,9 +6,7 @@ import (
 	"github.com/Genekkion/gogogadgets/pkg/log"
 )
 
-var (
-	defaultLogger = New(os.Stdout)
-)
+var defaultLogger = New(os.Stdout)
 
 func SetLevel(level log.Level) {
 	defaultLogger.SetLevel(level)
@@ -65,6 +63,7 @@ func DebugCaller(msg string, kv ...any) {
 func ErrorWrapper(err error) error {
 	return defaultLogger.ErrorWrapper(err)
 }
+
 func FatalWrapper(err error) {
-	defaultLogger.FatalWrapper(err, 2)
+	defaultLogger.FatalWrapper(err)
 }
