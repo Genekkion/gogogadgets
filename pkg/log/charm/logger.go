@@ -97,41 +97,24 @@ func (l Logger) Fatal(msg string, kv ...any) {
 	l.logger.Fatal(msg, kv...)
 }
 
-func getSkipCount(skip ...int) int {
-	var v int
-	if len(skip) == 0 {
-		v = 1
-	} else {
-		v = skip[0]
-	}
-	return v
-}
-
-func (l Logger) printStackTrace(skip ...int) {
-	pc, file, line, ok := runtime.Caller(getSkipCount(skip...))
-	if !ok {
-		l.Error("Error retrieving stack trace.")
-	} else {
-		l.Error("Stack trace:",
-			"function", runtime.FuncForPC(pc).Name(),
-			"file", file,
-			"line", line,
-		)
-	}
+func (l Logger) printStackTrace() {
+	buf := make([]byte, 1024*8)
+	n := runtime.Stack(buf, false)
+	l.Error("Stack trace:", "trace", string(buf[:n]))
 }
 
 // Wrapper function to log errors if they exist
-func (l Logger) ErrorWrapper(err error, skip ...int) error {
+func (l Logger) ErrorWrapper(err error) error {
 	if err != nil {
-		l.printStackTrace(skip...)
+		l.printStackTrace()
 		l.Error("Program received error", "err", err)
 	}
 	return err
 }
 
-func (l Logger) FatalWrapper(err error, skip ...int) {
+func (l Logger) FatalWrapper(err error) {
 	if err != nil {
-		l.printStackTrace(skip...)
+		l.printStackTrace()
 		l.Fatal("Program received error", "err", err)
 	}
 }
