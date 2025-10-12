@@ -2,8 +2,9 @@ package list
 
 import (
 	"fmt"
-	node "github.com/Genekkion/gogogadgets/pkg/dsa/node/linear"
 	"strings"
+
+	"github.com/Genekkion/gogogadgets/pkg/dsa/node"
 )
 
 type LinkedList[T any] struct {
