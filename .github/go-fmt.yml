@@ -2,7 +2,9 @@ name: Check formatting
 
 on:
   pull_request:
-    branches: [develop,main]
+    branches:
+      - develop
+      - main
 
 jobs:
   test:
