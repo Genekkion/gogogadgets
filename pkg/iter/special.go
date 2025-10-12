@@ -2,6 +2,7 @@ package iter
 
 import "iter"
 
+// RangeN returns an iterator that yields the numbers from 0 to n-1.
 func RangeN(n int) iter.Seq[int] {
 	return func(yield func(int) bool) {
 		for i := range n {
@@ -12,6 +13,8 @@ func RangeN(n int) iter.Seq[int] {
 	}
 }
 
+// CircularSlice returns an iterator that yields the elements of the slice
+// in a circular fashion.
 func CircularSlice[T any](slice []T) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		n := len(slice)
@@ -31,6 +34,8 @@ func CircularSlice[T any](slice []T) iter.Seq[T] {
 	}
 }
 
+// CircularSlice2 returns an iterator that yields the elements of the slice
+// in a circular fashion.
 func CircularSlice2[T any](slice []T) iter.Seq2[int, T] {
 	return func(yield func(int, T) bool) {
 		n := len(slice)

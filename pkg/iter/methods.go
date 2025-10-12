@@ -1,9 +1,12 @@
 package iter
 
+// FilterFunc is a function which takes a value and returns
+// true if the value should be yielded.
 type FilterFunc[T any] func(T) bool
 
-// Returns the elements which return true from the fn
-// provided.
+// Filter returns an iterator which yields the elements
+// from the original iterator which return true from the
+// fn provided.
 func (ite Iterator[T]) Filter(fn FilterFunc[T]) Iterator[T] {
 	return func(yield func(T) bool) {
 		for v := range ite {
@@ -16,8 +19,8 @@ func (ite Iterator[T]) Filter(fn FilterFunc[T]) Iterator[T] {
 	}
 }
 
-// Returns if all the values in the iterator have returned
-// true from the fn provided. Consumes the iterator.
+// All returns true if all the values in the iterator
+// return true from the fn provided.
 func (ite Iterator[T]) All(fn FilterFunc[T]) bool {
 	for v := range ite {
 		if !fn(v) {
@@ -27,9 +30,8 @@ func (ite Iterator[T]) All(fn FilterFunc[T]) bool {
 	return true
 }
 
-// Paritions the iterator into two slices, one for the true
-// values and one for the false values. Consumes the
-// iterator.
+// Partition returns two slices, one for the true values
+// and one for the false values.
 func (ite Iterator[T]) Partition(fn FilterFunc[T]) (
 	trueV []T, falseV []T) {
 
@@ -47,8 +49,7 @@ func (ite Iterator[T]) Partition(fn FilterFunc[T]) (
 	return trueV, falseV
 }
 
-// Returns the number of elements in the iterator, consuming
-// it.
+// Count returns the number of elements in the iterator.
 func (ite Iterator[T]) Count() int {
 	count := 0
 	for range ite {
@@ -57,8 +58,7 @@ func (ite Iterator[T]) Count() int {
 	return count
 }
 
-// Moves the iterator forward by up to n elements.
-// Returns the elements which have been passed.
+// AdvanceBy moves the iterator forward by up to n elements.
 func (ite Iterator[T]) AdvanceBy(n int) []T {
 	if n <= 0 {
 		return nil
@@ -78,7 +78,7 @@ func (ite Iterator[T]) AdvanceBy(n int) []T {
 	return acc
 }
 
-// Returns the nth element in the iterator, and true if the
+// Nth returns the nth element in the iterator, and true if the
 // value exists. Else, returns nil and false.
 func (ite Iterator[T]) Nth(n int) (*T, bool) {
 	if n < 0 {
@@ -96,6 +96,7 @@ func (ite Iterator[T]) Nth(n int) (*T, bool) {
 	return nil, false
 }
 
+// FirstN returns the first n elements in the iterator.
 func (ite Iterator[T]) FirstN(n int) Iterator[T] {
 	return func(yield func(T) bool) {
 		if n < 0 {
@@ -112,6 +113,7 @@ func (ite Iterator[T]) FirstN(n int) Iterator[T] {
 	}
 }
 
+// Last returns the last element in the iterator.
 func (ite Iterator[T]) Last() (*T, bool) {
 	var res T
 	flag := false
@@ -126,16 +128,22 @@ func (ite Iterator[T]) Last() (*T, bool) {
 	return &res, true
 }
 
-func (ite Iterator[T]) Intersperse(seperator T) Iterator[T] {
+// Intersperse returns an iterator which yields the elements
+// from the original iterator, with the separator between
+// each element.
+func (ite Iterator[T]) Intersperse(separator T) Iterator[T] {
 	return func(yield func(T) bool) {
 		for v := range ite {
-			if !yield(v) || !yield(seperator) {
+			if !yield(v) || !yield(separator) {
 				return
 			}
 		}
 	}
 }
 
+// Map returns an iterator which yields the elements
+// from the original iterator, after applying the fn
+// to each element.
 func Map[A any, B any](ite Iterator[A], fn func(A) B) Iterator[B] {
 	return func(yield func(B) bool) {
 		for v := range ite {
@@ -146,6 +154,8 @@ func Map[A any, B any](ite Iterator[A], fn func(A) B) Iterator[B] {
 	}
 }
 
+// Enumerate returns an iterator which yields the elements from the original
+// iterator, along with the index of the element.
 func (ite Iterator[T]) Enumerate() Iterator2[int, T] {
 	return func(yield func(int, T) bool) {
 		i := 0
@@ -158,6 +168,7 @@ func (ite Iterator[T]) Enumerate() Iterator2[int, T] {
 	}
 }
 
+// Collect returns a slice containing all the elements from the iterator.
 func (ite Iterator[T]) Collect() []T {
 	acc := make([]T, 0)
 	for v := range ite {
@@ -166,16 +177,15 @@ func (ite Iterator[T]) Collect() []T {
 	return acc
 }
 
-func Fold[A any, B any](ite Iterator[A], acc B,
-	fn func(A, B) B) B {
-
+// Fold returns the result of folding the iterator using the fn provided.
+func Fold[A any, B any](ite Iterator[A], acc B, fn func(A, B) B) B {
 	for v := range ite {
 		acc = fn(v, acc)
 	}
-
 	return acc
 }
 
+// Reduce returns the result of reducing the iterator using the fn provided.
 func (ite Iterator[T]) Reduce(fn func(T, T) T) T {
 	var acc *T
 	for v := range ite {
@@ -190,6 +200,7 @@ func (ite Iterator[T]) Reduce(fn func(T, T) T) T {
 	return *acc
 }
 
+// ForEach calls the fn for each element in the iterator.
 func (ite Iterator[T]) ForEach(fn func(T)) {
 	for v := range ite {
 		fn(v)

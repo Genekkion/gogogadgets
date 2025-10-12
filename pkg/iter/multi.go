@@ -2,13 +2,14 @@ package iter
 
 import "iter"
 
-func Zip[A any, B any](ite1 iter.Seq[A], ite2 iter.Seq[B]) iter.Seq2[A, B] {
+// Zip merges two iterators into a single iterator.
+func Zip[A any, B any](ite1 Iterator[A], ite2 Iterator[B]) iter.Seq2[A, B] {
 	return func(yield func(A, B) bool) {
 		stopped1 := false
 		stopped2 := false
 
-		next1, stop1 := iter.Pull(ite1)
-		next2, stop2 := iter.Pull(ite2)
+		next1, stop1 := iter.Pull(ite1.Iterator())
+		next2, stop2 := iter.Pull(ite2.Iterator())
 
 		for {
 			v1, ok1 := next1()
