@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-// Prints the caller of the function for debugging purposes.
+// printCaller Prints the caller of the function.
 func printCaller() {
 	pc, file, line, ok := runtime.Caller(2)
 	if ok {
