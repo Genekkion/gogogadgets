@@ -25,16 +25,9 @@ func TestNewSetWithSlice(t *testing.T) {
 	l := s.Len()
 	test.AssertEqual(t, "Incorrect length", 3, l)
 
-	if s.Contains(1) && s.Contains(2) && !s.Contains(3) {
-		return
-	}
-
-	expected := []int{1, 2, 3}
-	got := make([]int, 0, len(expected))
-	for k := range s.m {
-		got = append(got, k)
-	}
-	test.AssertEqual(t, "Unexpected set elements", expected, got)
+	test.Assert(t, "Does not contain the correct elements",
+		s.Contains(1) && s.Contains(2) && s.Contains(3),
+	)
 }
 
 // Tests adding elements to the set.
