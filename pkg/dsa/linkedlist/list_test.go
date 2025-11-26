@@ -35,7 +35,7 @@ func TestPushBackAndPopFront(t *testing.T) {
 
 	for _, n := range nodes {
 		got := l.PopFront()
-		test.NonNil(t, got)
+		test.Assert(t, "Item should not be nil", got != nil)
 		test.AssertEqual(t, "Unexpected value from node", n.GetValue(), got.GetValue())
 	}
 
@@ -68,7 +68,7 @@ func TestPushFrontAndPopBack(t *testing.T) {
 	for i := range nodes {
 		n := nodes[len(nodes)-1-i]
 		got := l.PopBack()
-		test.NonNil(t, got)
+		test.Assert(t, "Item should not be nil", got != nil)
 		test.AssertEqual(t, "Unexpected value from node", n.GetValue(), got.GetValue())
 	}
 
@@ -97,15 +97,15 @@ func TestFromExisting(t *testing.T) {
 
 	// PopBack should yield 30, then 20, then 10
 	got := l.PopBack()
-	test.NonNil(t, got)
+	test.Assert(t, "Item should not be nil", got != nil)
 	test.AssertEqual(t, "Unexpected value from node", 30, got.GetValue())
 
 	got = l.PopBack()
-	test.NonNil(t, got)
+	test.Assert(t, "Item should not be nil", got != nil)
 	test.AssertEqual(t, "Unexpected value from node", 20, got.GetValue())
 
 	got = l.PopBack()
-	test.NonNil(t, got)
+	test.Assert(t, "Item should not be nil", got != nil)
 	test.AssertEqual(t, "Unexpected value from node", 10, got.GetValue())
 
 	test.Assert(t, "List should be empty", l.IsEmpty())
